@@ -1,4 +1,5 @@
 #coding=utf8
+import imp
 import os
 import pprint
 import re
@@ -48,18 +49,20 @@ class Douyu:
         # 下面也是重复使用的代码，封装一下
         for i in self.__directoryList:
             pp.pprint("[" + str(i["dir_id"]) + "]" + i["dir_name"])
-        tmp = input("请选择数字：")
-        if tmp.isdigit() and (0 <= eval(tmp) <= len(
-                self.__directoryList)):  # isdigit()判断每个字符都是数字
-            for i in self.__directoryList:
-                if i["dir_id"] == eval(tmp):
-                    # pp.pprint(i["dir_url"])
-                    return i["dir_url"]
-                continue
-        elif not tmp.isdigit():
-            pp.pprint("输入类型有误！")
-        else:
-            pp.pprint("输入范围有误！")
+
+        while True:
+            tmp = input("请选择数字：")
+            if tmp.isdigit() and (0 <= eval(tmp) < len(
+                    self.__directoryList)):  # isdigit()判断每个字符都是数字
+                for i in self.__directoryList:
+                    if i["dir_id"] == eval(tmp):
+                        # pp.pprint(i["dir_url"])
+                        return i["dir_url"]
+                    continue
+            elif not tmp.isdigit():
+                pp.pprint("输入类型有误，请重新输入！")
+            else:
+                pp.pprint("输入范围有误，请重新输入！")
 
     def get_games(self):
         location = self.get_directoryList()
@@ -88,18 +91,20 @@ class Douyu:
         print("所有游戏：")
         for i in self.__games:
             pp.pprint("[" + str(i["game_id"]) + "]" + i["game_name"])
-        tmp = input("请选择数字：")
-        if tmp.isdigit() and (0 <= eval(tmp) <= len(
-                self.__games)):  # isdigit()判断每个字符都是数字
-            for i in self.__games:
-                if i["game_id"] == eval(tmp):
-                    # pp.pprint(i["game_url"])
-                    return i["game_url"]
-                continue
-        elif not tmp.isdigit():
-            pp.pprint("输入类型有误！")
-        else:
-            pp.pprint("输入范围有误！")
+
+        while True:
+            tmp = input("请选择数字：")
+            if tmp.isdigit() and (0 <= eval(tmp) < len(
+                    self.__games)):  # isdigit()判断每个字符都是数字
+                for i in self.__games:
+                    if i["game_id"] == eval(tmp):
+                        # pp.pprint(i["game_url"])
+                        return i["game_url"]
+                    continue
+            elif not tmp.isdigit():
+                pp.pprint("输入类型有误，请重新输入！")
+            else:
+                pp.pprint("输入范围有误，请重新输入！")
 
     def get_live(self):
         location = self.get_games()
@@ -132,29 +137,46 @@ class Douyu:
         for i in self.__lives:
             pp.pprint("[" + str(i["live_id"]) + "]" + i["live_streamer"] +
                       " : " + i["live_title"])
-        tmp = input("请选择数字：")
-        if tmp.isdigit() and (0 <= eval(tmp) <= len(
-                self.__lives)):  # isdigit()判断每个字符都是数字
-            for i in self.__lives:
-                if i["live_id"] == eval(tmp):
-                    # pp.pprint(i["live_url"])
-                    return i["live_url"]
-                continue
-        elif not tmp.isdigit():
-            pp.pprint("输入类型有误！")
-        else:
-            pp.pprint("输入范围有误！")
+        # tmp = input("请选择数字：")
+        while True:
+            tmp = input("请选择数字：")
+            if tmp.isdigit() and (0 <= eval(tmp) < len(
+                    self.__lives)):  # isdigit()判断每个字符都是数字
+                for i in self.__lives:
+                    if i["live_id"] == eval(tmp):
+                        # pp.pprint(i["live_url"])
+                        return i["live_url"]
+            elif not tmp.isdigit():
+                pp.pprint("输入类型有误，请重新输入！")
+            else:
+                pp.pprint("输入范围有误，请重新输入！")
+
+    # 判断模块是否安装
+    def check_module(self, name):
+        try:
+            imp.find_module(name)
+            found = True
+        except ImportError:
+            found = False
+        return found
 
     def live_run(self):
+        # if not self.check_module("you-get"):
+        #     raise AssertionError('Module you-get is not installed.')
+        # if not self.check_module("requests"):
+        #     raise AssertionError('Module requests is not installed.')
+        # elif not self.check_module("urllib3"):
+        #     raise AssertionError('Module urllib3 is not installed.')
+        # elif not self.check_module("beautifulsoup4"):
+        #     raise AssertionError('Module urllib3 is not installed.')
+        # else:
         location = self.get_live()
-
         url = baseUrl + location
-
         os.system("you-get -p vlc " + url)
 
 
 if __name__ == "__main__":
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     start = Douyu()
-    # start.get_games(directoryList)
+
     start.live_run()
